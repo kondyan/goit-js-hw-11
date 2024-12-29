@@ -15,22 +15,26 @@ let gallery;
 
 const options = {
   root: null,
-  rootMargin: "250px",
+  rootMargin: "300px",
   threshold: 1.0,
 };
 
 var observer = new IntersectionObserver(onLoad, options);
 
-function onLoad() {
-  gallery.refresh();
-  currentPage += 1;
-  renderData(searchQuery, currentPage);
+function onLoad(entries, observer) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting && entry.target === refs.target) {
+      observer.unobserve(refs.target);
+      gallery.refresh();
+      currentPage += 1;
+      renderData(searchQuery, currentPage);
+    }
+  });
 }
 
 export const refs = {
   submitForm: document.querySelector(".search-form"),
   gallery: document.querySelector(".gallery"),
-  loadMoreBtn: document.querySelector(".load-more"),
   target: document.querySelector(".js-guard"),
 };
 // replace with notifix solution
@@ -76,24 +80,26 @@ async function renderData(query, page) {
         downloads
       )
   );
-  observer.observe(refs.target);
   refs.gallery.insertAdjacentHTML("beforeend", itemsLayout.join(""));
   if (checkIfBtnVisible(currentPage, perPage, totalHits)) {
-    refs.loadMoreBtn.removeAttribute("hidden");
+    observer.observe(refs.target);
   } else {
     Notiflix.Notify.info(
       "We're sorry, but you've reached the end of search results."
     );
-    refs.loadMoreBtn.setAttribute("hidden", "true");
   }
 
   gallery = new SimpleLightbox(".gallery a", {});
 }
 
 refs.submitForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  currentPage = 1;
-  refs.gallery.innerHTML = "";
-  searchQuery = Object.fromEntries(new FormData(e.target)).searchQuery;
-  await renderData(searchQuery, currentPage);
+  try {
+    e.preventDefault();
+    currentPage = 1;
+    refs.gallery.innerHTML = "";
+    searchQuery = Object.fromEntries(new FormData(e.target)).searchQuery;
+    await renderData(searchQuery, currentPage);
+  } catch (error) {
+    console.log(error);
+  }
 });

@@ -59,7 +59,8 @@ img {
   padding-top: 20px;
   padding-left: 40px;
   padding-right: 40px;
-  justify-content: center;
+  padding-bottom: 20px;
+  justify-content: start;
   flex-wrap: wrap;
   overflow: hidden;
   gap: 20px;
@@ -71,11 +72,6 @@ img {
   top: 0;
   padding: 20px;
   background-color: #315cfd;
-}
-
-.footer {
-  display: flex;
-  padding-top: 50px;
 }
 
 .search-form {
