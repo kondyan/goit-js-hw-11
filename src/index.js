@@ -52,7 +52,6 @@ async function renderData(query, page) {
   totalHits = data.totalHits;
 
   if (!items.length) {
-    refs.loadMoreBtn.setAttribute("hidden", "true");
     rejectMessage();
     return;
   }
